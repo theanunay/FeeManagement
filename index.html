@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fee Management System - Mantra Computert</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --success: #27ae60;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+        }
+        
+        .sidebar {
+            background-color: var(--secondary);
+            color: white;
+            height: calc(100vh - 56px);
+            position: sticky;
+            top: 56px;
+        }
+        
+        .sidebar a {
+            color: white;
+            padding: 15px 20px;
+            display: block;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background-color: var(--primary);
+            padding-left: 25px;
+        }
+        
+        .sidebar i {
+            margin-right: 10px;
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+            border: none;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .dashboard-card {
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .card-1 { background: linear-gradient(to right, #3498db, #2980b9); }
+        .card-2 { background: linear-gradient(to right, #2ecc71, #27ae60); }
+        .card-3 { background: linear-gradient(to right, #e74c3c, #c0392b); }
+        .card-4 { background: linear-gradient(to right, #f39c12, #d35400); }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .stats-icon {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+        
+        .content-section {
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .active-content {
+            display: block;
+        }
+        
+        .course-badge {
+            background-color: var(--primary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        
+        .footer {
+            background-color: var(--secondary);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+        }
+        
+        .invoice {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: white;
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 24px;
+            color: var(--primary);
+        }
+        
+        .table th {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .highlight {
+            background-color: #fff8e1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-laptop-code"></i> Mantra Computert
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-user"></i> Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-cog"></i> Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 p-0 sidebar">
+                <a href="#" class="active" data-target="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="#" data-target="students"><i class="fas fa-users"></i> Students</a>
+                <a href="#" data-target="courses"><i class="fas fa-book"></i> Courses</a>
+                <a href="#" data-target="fees"><i class="fas fa-money-bill-wave"></i> Fee Collection</a>
+                <a href="#" data-target="reports"><i class="fas fa-chart-bar"></i> Reports</a>
+                <a href="#" data-target="invoice"><i class="fas fa-receipt"></i> Generate Invoice</a>
+                <a href="#" data-target="reminders"><i class="fas fa-bell"></i> Payment Reminders</a>
+                <a href="#" data-target="settings"><i class="fas fa-cog"></i> System Settings</a>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 mt-4">
+                <!-- Dashboard Content -->
+                <div id="dashboard" class="content-section active-content">
+                    <h2 class="mb-4">Dashboard</h2>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card dashboard-card card-1">
+                                <div class="card-body">
+                                    <i class="fas fa-users stats-icon"></i>
+                                    <h3>128</h3>
+                                    <p>Total Students</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card dashboard-card card-2">
+                                <div class="card-body">
+                                    <i class="fas fa-book stats-icon"></i>
+                                    <h3>8</h3>
+                                    <p>Courses</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card dashboard-card card-3">
+                                <div class="card-body">
+                                    <i class="fas fa-money-bill-wave stats-icon"></i>
+                                    <h3>₹86,500</h3>
+                                    <p>Total Revenue</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card dashboard-card card-4">
+                                <div class="card-body">
+                                    <i class="fas fa-exclamation-circle stats-icon"></i>
+                                    <h3>12</h3>
+                                    <p>Pending Fees</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Recent Payments</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Student</th>
+                                                    <th>Course</th>
+                                                    <th>Amount</th>
+                                                    <th>Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Rahul Kumar</td>
+                                                    <td>WEB DEVELOPMENT</td>
+                                                    <td>₹5,000</td>
+                                                    <td>15 Aug 2023</td>
+                                                </tr>
+                                                <tr class="highlight">
+                                                    <td>Priya Singh</td>
+                                                    <td>DCA</td>
+                                                    <td>₹3,500</td>
+                                                    <td>14 Aug 2023</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Amit Sharma</td>
+                                                    <td>TALLY PRIME</td>
+                                                    <td>₹4,000</td>
+                                                    <td>13 Aug 2023</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Sneha Gupta</td>
+                                                    <td>ADCA</td>
+                                                    <td>₹4,500</td>
+                                                    <td>12 Aug 2023</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">Course-wise Enrollment</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="courseChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Content -->
+                <div id="students" class="content-section">
+                    <h2 class="mb-4">Student Management</h2>
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Student List</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <input type="text" class="form-control w-50" placeholder="Search students...">
+                                <button class="btn btn-primary"><i class="fas fa-plus"></i> Add New Student</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Course</th>
+                                            <th>Contact</th>
+                                            <th>Total Fee</th>
+                                            <th>Paid</th>
+                                            <th>Balance</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>ST001</td>
+                                            <td>Rahul Kumar</td>
+                                            <td><span class="course-badge">WEB DEVELOPMENT</span></td>
+                                            <td>+91 9876543210</td>
+                                            <td>₹15,000</td>
+                                            <td>₹10,000</td>
+                                            <td>₹5,000</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></button>
+                                                <button class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr class="highlight">
+                                            <td>ST002</td>
+                                            <td>Priya Singh</td>
+                                            <td><span class="course-badge">DCA</span></td>
+                                            <td>+91 9876543211</td>
+                                            <td>₹12,000</td>
+                                            <td>₹8,500</td>
+                                            <td>₹3,500</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></button>
+                                                <button class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>ST003</td>
+                                            <td>Amit Sharma</td>
+                                            <td><span class="course-badge">TALLY PRIME</span></td>
+                                            <td>+91 9876543212</td>
+                                            <td>₹10,000</td>
+                                            <td>₹6,000</td>
+                                            <td>₹4,000</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></button>
+                                                <button class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>ST004</td>
+                                            <td>Sneha Gupta</td>
+                                            <td><span class="course-badge">ADCA</span></td>
+                                            <td>+91 9876543213</td>
+                                            <td>₹18,000</td>
+                                            <td>₹13,500</td>
+                                            <td>₹4,500</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></button>
+                                                <button class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Courses Content -->
+                <div id="courses" class="content-section">
+                    <h2 class="mb-4">Course Management</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Add New Course</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label class="form-label">Course Name</label>
+                                            <input type="text" class="form-control" placeholder="Enter course name">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Duration (months)</label>
+                                            <input type="number" class="form-control" placeholder="Duration">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Course Fee (₹)</label>
+                                            <input type="number" class="form-control" placeholder="Fee amount">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100">Add Course</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">Available Courses</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5>ADCA</h5>
+                                                    <p>Duration: 12 months</p>
+                                                    <p>Fee: ₹18,000</p>
+                                                    <p>Enrolled: 25 students</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5>DCA</h5>
+                                                    <p>Duration: 6 months</p>
+                                                    <p>Fee: ₹12,000</p>
+                                                    <p>Enrolled: 32 students</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5>TALLY PRIME</h5>
+                                                    <p>Duration: 3 months</p>
+                                                    <p>Fee: ₹10,000</p>
+                                                    <p>Enrolled: 18 students</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5>WEB DEVELOPMENT</h5>
+                                                    <p>Duration: 6 months</p>
+                                                    <p>Fee: ₹15,000</p>
+                                                    <p>Enrolled: 28 students</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fee Collection Content -->
+                <div id="fees" class="content-section">
+                    <h2 class="mb-4">Fee Collection</h2>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Collect Fee</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label class="form-label">Student ID/Name</label>
+                                            <input type="text" class="form-control" placeholder="Enter student ID or name">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Course</label>
+                                            <select class="form-select">
+                                                <option selected>Select course</option>
+                                                <option>ADCA</option>
+                                                <option>DCA</option>
+                                                <option>TALLY PRIME</option>
+                                                <option>WEB DEVELOPMENT</option>
+                                                <option>DIGITAL MARKETING</option>
+                                                <option>SEO</option>
+                                                <option>Financial Accounting</option>
+                                                <option>Programming</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Amount (₹)</label>
+                                            <input type="number" class="form-control" placeholder="Enter amount">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Payment Date</label>
+                                            <input type="date" class="form-control">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Payment Mode</label>
+                                            <select class="form-select">
+                                                <option>Cash</option>
+                                                <option>Bank Transfer</option>
+                                                <option>UPI</option>
+                                                <option>Card</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100">Collect Fee</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">Recent Transactions</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Transaction ID</th>
+                                                    <th>Student</th>
+                                                    <th>Date</th>
+                                                    <th>Amount</th>
+                                                    <th>Mode</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>TXN1001</td>
+                                                    <td>Rahul Kumar</td>
+                                                    <td>15 Aug 2023</td>
+                                                    <td>₹5,000</td>
+                                                    <td>Cash</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>TXN1002</td>
+                                                    <td>Priya Singh</td>
+                                                    <td>14 Aug 2023</td>
+                                                    <td>₹3,500</td>
+                                                    <td>UPI</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>TXN1003</td>
+                                                    <td>Amit Sharma</td>
+                                                    <td>13 Aug 2023</td>
+                                                    <td>₹4,000</td>
+                                                    <td>Bank Transfer</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>TXN1004</td>
+                                                    <td>Sneha Gupta</td>
+                                                    <td>12 Aug 2023</td>
+                                                    <td>₹4,500</td>
+                                                    <td>Card</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Invoice Content -->
+                <div id="invoice" class="content-section">
+                    <h2 class="mb-4">Generate Invoice</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Select Student</label>
+                                        <select class="form-select">
+                                            <option>Select student</option>
+                                            <option>Rahul Kumar (ST001)</option>
+                                            <option>Priya Singh (ST002)</option>
+                                            <option>Amit Sharma (ST003)</option>
+                                            <option>Sneha Gupta (ST004)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <button class="btn btn-primary mt-4"><i class="fas fa-download"></i> Download Invoice</button>
+                                    <button class="btn btn-success mt-4"><i class="fas fa-print"></i> Print Invoice</button>
+                                </div>
+                            </div>
+
+                            <div class="invoice">
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <h3 class="logo">Mantra Computert</h3>
+                                        <p>Kishore Nagar, Infront of Federal Bank<br>
+                                        Rewa Road, Bhagwanpur<br>
+                                        Muzaffarpur, Bihar - 842001</p>
+                                        <p>Email: info.mantracomputer@gmail.com</p>
+                                    </div>
+                                    <div class="col-md-6 text-end">
+                                        <h3>INVOICE</h3>
+                                        <p>Invoice #: INV20230815001<br>
+                                        Date: August 15, 2023</p>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <strong>Bill To:</strong>
+                                        <p>Rahul Kumar<br>
+                                        Student ID: ST001<br>
+                                        Phone: +91 9876543210</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>Course Details:</strong>
+                                        <p>WEB DEVELOPMENT<br>
+                                        Duration: 6 months<br>
+                                        Total Fee: ₹15,000</p>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Description</th>
+                                                <th>Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>WEB DEVELOPMENT Course Fee</td>
+                                                <td>₹15,000</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Discount</td>
+                                                <td>₹0</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Previous Paid</td>
+                                                <td>₹5,000</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Current Payment</strong></td>
+                                                <td><strong>₹5,000</strong></td>
+                                            </tr>
+                                            <tr class="table-success">
+                                                <td><strong>Total Paid</strong></td>
+                                                <td><strong>₹10,000</strong></td>
+                                            </tr>
+                                            <tr class="table-warning">
+                                                <td><strong>Balance Amount</strong></td>
+                                                <td><strong>₹5,000</strong></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="row mt-5">
+                                    <div class="col-md-12">
+                                        <p>Payment Method: Cash</p>
+                                        <p>Payment Date: August 15, 2023</p>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-5">
+                                    <div class="col-md-12 text-center">
+                                        <p>Thank you for your payment!</p>
+                                        <p>Authorized Signature: _________________</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other content sections would be defined here -->
+                <div id="reports" class="content-section">
+                    <h2 class="mb-4">Reports & Analytics</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <p>Financial reports and analytics will be displayed here.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="reminders" class="content-section">
+                    <h2 class="mb-4">Payment Reminders</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <p>Payment reminder system will be implemented here.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="settings" class="content-section">
+                    <h2 class="mb-4">System Settings</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <p>System configuration and settings will be managed here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-5">
+        <div class="container">
+            <p class="mb-0">© 2023 Mantra Computert. All rights reserved.</p>
+            <p class="mb-0">Kishore Nagar, Infront of Federal Bank, Rewa Road, Bhagwanpur, Muzaffarpur, Bihar - 842001</p>
+            <p class="mb-0">Email: info.mantracomputer@gmail.com</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Navigation handling
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Update active link
+                document.querySelectorAll('.sidebar a').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Show relevant content
+                const target = this.getAttribute('data-target');
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active-content');
+                });
+                document.getElementById(target).classList.add('active-content');
+            });
+        });
+
+        // Course chart
+        const ctx = document.getElementById('courseChart').getContext('2d');
+        const courseChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['ADCA', 'DCA', 'TALLY PRIME', 'WEB DEVELOPMENT', 'DIGITAL MARKETING', 'SEO'],
+                datasets: [{
+                    label: 'Number of Students',
+                    data: [25, 32, 18, 28, 15, 10],
+                    backgroundColor: [
+                        'rgba(52, 152, 219, 0.7)',
+                        'rgba(46, 204, 113, 0.7)',
+                        'rgba(155, 89, 182, 0.7)',
+                        'rgba(241, 196, 15, 0.7)',
+                        'rgba(230, 126, 34, 0.7)',
+                        'rgba(231, 76, 60, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(52, 152, 219, 1)',
+                        'rgba(46, 204, 113, 1)',
+                        'rgba(155, 89, 182, 1)',
+                        'rgba(241, 196, 15, 1)',
+                        'rgba(230, 126, 34, 1)',
+                        'rgba(231, 76, 60, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
